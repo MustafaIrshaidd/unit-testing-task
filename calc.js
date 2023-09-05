@@ -1,42 +1,52 @@
-function calc(...args) {
+export const calc = (...args) => {
   const proiority = {
-    '+': 1,
-    '-': 1,
-    '*': 2,
-    '/': 2,
+    "+": 1,
+    "-": 1,
+    "*": 2,
+    "/": 2,
   };
 
   const applyOperation = (left, operator, right) => {
     switch (operator) {
-      case '+':
+      case "+":
         return left + right;
-      case '-':
+      case "-":
         return left - right;
-      case '*':
+      case "*":
         return left * right;
-      case '/':
+      case "/":
         if (right === 0) {
-          throw new Error('Division by zero');
+          throw new Error("Division by zero");
         }
         return left / right;
       default:
-        throw new Error('Invalid operator');
+        throw new Error("Invalid operator");
     }
-  }
+  };
 
   const operandStack = [];
   const operatorStack = [];
 
-  args.forEach((token,index) => {
-    if(index%2==0){
-      if (typeof token === 'number') {
+  args.forEach((token, index) => {
+    if (index % 2 == 0) {
+      if (typeof token === "number") {
+        if (token > 1000) {
+          if(operandStack.length> 0){
+             operatorStack.pop()
+          }  
+          else{
+            throw new Error("Invalid statement")
+          }
+          return;
+        }
         operandStack.push(token);
-      } 
-      else{
-        throw new Error('Invalid input type');
+      } else {
+        throw new Error("Invalid input type");
       }
-    }
-    else if (typeof token === 'string' && Object.keys(proiority).includes(token)) {
+    } else if (
+      typeof token === "string" &&
+      Object.keys(proiority).includes(token)
+    ) {
       while (
         operatorStack.length > 0 &&
         proiority[operatorStack[operatorStack.length - 1]] >= proiority[token]
@@ -44,15 +54,16 @@ function calc(...args) {
         const rightOperand = operandStack.pop();
         const leftOperand = operandStack.pop();
         const op = operatorStack.pop();
+
         const result = applyOperation(leftOperand, op, rightOperand);
         operandStack.push(result);
       }
       operatorStack.push(token);
     } else {
-      throw new Error('Invalid operator');
+      throw new Error("Invalid operator");
     }
   });
-  
+
   while (operatorStack.length > 0) {
     const rightOperand = operandStack.pop();
     const leftOperand = operandStack.pop();
@@ -61,17 +72,15 @@ function calc(...args) {
     operandStack.push(result);
   }
 
-
   if (operandStack.length === 1) {
     return operandStack[0];
   } else {
-    throw new Error('Invalid expression');
+    throw new Error("Invalid expression");
   }
-}
+};
 
 try {
-  const result = calc('2', '+', 3);
-  console.log('Result:', result);
-} catch (error) {
-  console.error('Error:', error.message);
+  calc(2, "+", 1001);
+} catch (e) {
+  console.log(e);
 }
