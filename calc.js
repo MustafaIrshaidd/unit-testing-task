@@ -16,7 +16,7 @@ export const calc = (num1, op, num2) => {
       return num1 * num2;
     case '/':
       if (num2 === 0) {
-        throw new Error("Cannot divide by 0");
+        throw new Error("Division by zero");
       }
       return num1 / num2;
     default:
